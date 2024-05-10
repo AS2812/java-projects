@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<expr type="binary">
+    <operator value="+"/>
+    <expr type="binary">
+        <operator value="*"/>
+        <expr type="atom">
+            <atom value="3"/>
+        </expr>
+        <expr type="binary">
+            <operator value="+"/>
+            <expr type="atom">
+                <atom value="5"/>
+            </expr>
+            <expr type="atom">
+                <atom value="4"/>
+            </expr>
+        </expr>
+    </expr>
+    <expr type="binary">
+        <operator value="*"/>
+        <expr type="atom">
+            <atom value="9"/>
+        </expr>
+        <expr type="atom">
+            <atom value="8"/>
+        </expr>
+    </expr>
+</expr>
