@@ -1,4 +1,4 @@
-package safwa;
+
 import java.util.Random;
 import javax.swing.JOptionPane;
 
