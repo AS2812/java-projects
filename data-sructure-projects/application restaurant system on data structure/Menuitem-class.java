@@ -1,7 +1,7 @@
 class MenuItem
 {
     private String name;
-    private double price;
+    private static double price;
     private String description;
     private String category;
 
@@ -23,7 +23,7 @@ class MenuItem
         this.name = name;
     }
 
-    public double getPrice()
+    public static double getPrice()
     {
         return price;
     }
