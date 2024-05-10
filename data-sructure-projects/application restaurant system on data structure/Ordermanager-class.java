@@ -1,8 +1,6 @@
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
-class OrderManager  {
+class OrderManager {
     private List<Order> orders;
 
     public OrderManager() {
@@ -25,14 +23,11 @@ class OrderManager  {
     }
 
     public Order findOrder(int orderNumber) {
-        // Sort the list before performing binary search
-        Collections.sort(orders, new Ordercompartor());
-
-        int index = Collections.binarySearch(orders, new Order(orderNumber), new Ordercompartor());
-        if (index >= 0) {
-            return orders.get(index);
-        } else {
-            return null;
+        for (Order order : orders) {
+            if (order.getOrderNumber() == orderNumber) {
+                return order;
+            }
         }
+        return null;
     }
 }
