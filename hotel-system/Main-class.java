@@ -1,14 +1,13 @@
-package safwa;
 
 import javax.swing.JOptionPane;
 
-public class Safwa {
+public class Main {
 
-    static staff staff1 = new staff("Mohamed Essam", "123abc");
-    static staff staff2 = new staff("Akram Ahmed", "456def");
-    static staff staff3 = new staff("Ziad Ahmed", "789ghi");
-    static staff staff4 = new staff("Youssef Mamdouh", "101jkl");
-    static staff staff5 = new staff("Abdallah Nagah", "112mno");
+    static staff staff1 = new staff("ahmed shacker", "004a");
+    static staff staff2 = new staff("karim shacker", "005k");
+    static staff staff3 = new staff("pretty girls", "006p");
+    static staff staff4 = new staff("pipo", "008p");
+    static staff staff5 = new staff("david", "007d");
     static Hotel OurHotel = new Hotel(3, 5);
     static staff[] staff = {staff1, staff2, staff3, staff4, staff5};
 
