@@ -1,5 +1,7 @@
+import java.time.LocalTime;
 import java.util.*;
-
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -212,12 +214,30 @@ public class Main {
                         System.out.print("Enter number of people: ");
                         int numberOfPeople = scanner.nextInt();
                         scanner.nextLine();
-                        System.out.print("Enter date (YYYY-MM-DD): ");
-                        String date = scanner.nextLine();
-                        System.out.print("Enter time: ");
-                        String time = scanner.nextLine();
-                        reservationSystem.makeReservation(reservationNumber, customerName, numberOfPeople, date, time);
-                        break;
+                         LocalDate currentDate = LocalDate.now();
+                         LocalDate date;
+                         do {
+                             System.out.print("Enter date (YYYY-MM-DD): ");
+                             date = LocalDate.parse(scanner.nextLine());
+                             if (date.isBefore(currentDate)) {
+                                 System.out.println("Date cannot be before today's date. Please enter a valid date.");
+                                                            }
+                                } while (date.isBefore(currentDate));
+                                 // Loop until a valid time is entered
+                                    boolean validTime = false;
+                                    String time = "";
+                                     while (!validTime) {
+                                    System.out.print("Enter time (HH:mm): ");
+                                      time = scanner.nextLine();
+                                        try {
+                                            LocalTime.parse(time, DateTimeFormatter.ofPattern("HH:mm"));
+                                            validTime = true;
+                                             } catch (Exception e) {
+                                                System.out.println("Invalid time format. Please enter time in HH:mm format.");
+                                                                    }
+                                                     }
+                                                        reservationSystem.makeReservation(reservationNumber, customerName, numberOfPeople, date.toString(), time);
+                                     break;
                     case 2:
                         System.out.print("Enter reservation number to cancel: ");
                         int reservationNumToCancel = scanner.nextInt();
