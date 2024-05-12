@@ -1,7 +1,7 @@
 import java.util.*;
 class Order {
     private int orderNumber;
-    private List<OrderItem> items;
+    private static List<OrderItem> items;
 
     public Order(int orderNumber) {
         this.orderNumber = orderNumber;
@@ -16,7 +16,7 @@ class Order {
         items.removeIf(item -> item.getItemName().equals(itemName));
     }
 
-    public double calculateTotalPrice() {
+    public static double calculateTotalPrice() {
         double totalPrice = 0;
         for (OrderItem item : items) {
             totalPrice += item.calculateSubtotal();
@@ -27,16 +27,19 @@ class Order {
     public void displayOrderDetails() {
         System.out.println("Order Number: " + orderNumber);
         System.out.println("Items:");
-        for (OrderItem item : items) {
+        for (OrderItem item : items)
+        {
             System.out.println("- " + item.getItemName() + " | Quantity: " + item.getQuantity() + " | Price: $" + item.getPrice());
         }
+
     }
 
     public int getOrderNumber() {
         return orderNumber;
     }
 
-    public List<OrderItem> getItems() {
+    public static List<OrderItem> getItems()
+    {
         return items;
     }
 }
