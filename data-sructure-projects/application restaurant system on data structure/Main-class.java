@@ -152,75 +152,69 @@ public class Main {
                 scanner.nextLine();
 
               switch (choice) {
-    case 1:
-    System.out.print("Enter order number: ");
-    int orderNumber = scanner.nextInt();
-    Order order = new Order(orderNumber);
-    boolean addMoreItems = true;
-    while (addMoreItems) {
-        System.out.println("\nAvailable Menu Items:");
-        MenuManager.displayMenu();
+                case 1:
+                    System.out.print("Enter order number: ");
+                    int orderNumber = scanner.nextInt();
+                    Order order = new Order(orderNumber);
+                    boolean addMoreItems = true;
+                    while (addMoreItems) {
+                        System.out.println("\nAvailable Menu Items:");
+                        MenuManager.displayMenu();
 
-        boolean validItemName = false;
-        String itemName = "";
-        while (!validItemName) {
-            System.out.print("Enter the name of the item you want to add to the order: ");
-            itemName = scanner.nextLine().trim();
-            // Retrieve the selected menu item
-            MenuItem menuItem = MenuManager.searchName(itemName);
-            if (menuItem == null) {
-                System.out.println("Item not found. Please choose a valid item name.");
-            } else {
-                validItemName = true;
-            }
-        }
+                        boolean validItemName = false;
+                        String itemName = "";
+                        while (!validItemName) {
+                            System.out.print("Enter the name of the item you want to add to the order: ");
+                            itemName = scanner.nextLine().trim();
+                            MenuItem menuItem = MenuManager.searchName(itemName);
+                            if (menuItem == null) {
+                                System.out.println("Item not found. Please choose a valid item name.");
+                            } else {
+                                validItemName = true;
+                            }
+                        }
 
-        System.out.print("Enter quantity: ");
-        int quantity = scanner.nextInt();
+                        System.out.print("Enter quantity: ");
+                        int quantity = scanner.nextInt();
+                        scanner.nextLine();
+                        order.addItem(itemName, quantity, MenuManager.searchName(itemName).getPrice());
 
-        // Calculate the total price for this item based on quantity
-        double totalPrice = MenuItem.getPrice() * quantity;
+                        // Ask if the user wants to add more items
+                        boolean validInput = false;
+                        while (!validInput) {
+                            System.out.print("Add more items? (yes/no): ");
+                            String addMore = scanner.next().toLowerCase();
+                            if (addMore.equals("yes")) {
+                                validInput = true;
+                            } else if (addMore.equals("no")) {
+                                validInput = true;
+                                addMoreItems = false;
+                            } else {
+                                System.out.println("Invalid input. Please enter 'yes' or 'no'.");
+                            }
+                        }
+                    }
 
-        // Add the item to the order
-        order.addItem(itemName, quantity, totalPrice);
+                    // Display the order details and confirm
+                    System.out.println("\nOrder Summary:");
+                    order.displayOrderDetails();
+                    System.out.println("Total Price: $" + order.calculateTotalPrice());
 
-        // Ask if the user wants to add more items
-        boolean validInput = false;
-        while (!validInput) {
-            System.out.print("Add more items? (yes/no): ");
-            String addMore = scanner.next().toLowerCase();
-            if (addMore.equals("yes")) {
-                validInput = true;
-            } else if (addMore.equals("no")) {
-                validInput = true;
-                addMoreItems = false;
-            } else {
-                System.out.println("Invalid input. Please enter 'yes' or 'no'.");
-            }
-        }
-    }
-
-    // Display the order details and confirm
-    System.out.println("\nOrder Summary:");
-    order.displayOrderDetails();
-    System.out.println("Total Price: $" + order.calculateTotalPrice());
-
-    boolean validConfirm = false;
-    while (!validConfirm) {
-        System.out.print("Are you sure you want to place this order? (yes/no): ");
-        String confirmOrder = scanner.next().toLowerCase();
-        if (confirmOrder.equals("yes")) {
-            validConfirm = true;
-            orderManager.placeOrder(order);
-            System.out.println("Order placed successfully!");
-        } else if (confirmOrder.equals("no")) {
-            validConfirm = true;
-            System.out.println("Order placement cancelled.");
-        } else {
-            System.out.println("Invalid input. Please enter 'yes' or 'no'.");
-        }
-    }
-    break;
+                    boolean validConfirm = false;
+                    while (!validConfirm) {
+                        System.out.print("Are you sure you want to place this order? (yes/no): ");
+                        String confirmOrder = scanner.next().toLowerCase();
+                        if (confirmOrder.equals("yes")) {
+                            validConfirm = true;
+                            orderManager.placeOrder(order);
+                        } else if (confirmOrder.equals("no")) {
+                            validConfirm = true;
+                            orderManager.cancelOrder(order);
+                        } else {
+                            System.out.println("Invalid input. Please enter 'yes' or 'no'.");
+                        }
+                    }
+                    break;
                 case 2:
                     System.out.print("Enter order number to cancel: ");
                     int orderNumToCancel = scanner.nextInt();
