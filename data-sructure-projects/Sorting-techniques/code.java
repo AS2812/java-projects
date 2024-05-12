@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
- */
 
 import org.knowm.xchart.CategoryChart;
 import org.knowm.xchart.CategoryChartBuilder;
@@ -21,10 +17,6 @@ public class Main {
          int[] randomArray = generateRandomArray(10000);
         int[] sortedArray = generateSortedArray(10000);
         int[] inverselySortedArray = generateInverselySortedArray(10000);
-        int[] array_size_10000 = new int[10000];
-        for (int i = 0; i < array_size_10000.length; i++) {
-            array_size_10000[i] = i;
-        }
 
         System.out.println("Performance comparison for Random Array :");
         compareSortingTechniques(randomArray);
@@ -35,39 +27,41 @@ public class Main {
         System.out.println("\nPerformance comparison for Inversely Sorted Array :");
         compareSortingTechniques(inverselySortedArray);
 
-        System.out.println("\nPerformance comparison for array start from 0 to 10000:");
-        compareSortingTechniques(array_size_10000);
-
         // Generate and display the graph
-        displayPerformanceGraph(randomArray, sortedArray, inverselySortedArray, array_size_10000);
-
+        displayPerformanceGraph(randomArray, sortedArray, inverselySortedArray);
     }
 
-    public static void displayPerformanceGraph(int[] randomArray, int[] sortedArray, int[] inverselySortedArray, int[] array_size_10000) {
-        // Create Chart
-        CategoryChart chart = new CategoryChartBuilder()
-                .width(800)
-                .height(600)
-                .title("Sorting Technique Performance Comparison")
-                .xAxisTitle("Sorting Technique")
-                .yAxisTitle("Runtime (ns)")
-                .theme(Styler.ChartTheme.GGPlot2)
-                .build();
+    public static void displayPerformanceGraph(int[] randomArray, int[] sortedArray, int[] inverselySortedArray) {
+    // Create Chart
+    CategoryChart chart = new CategoryChartBuilder()
+            .width(800)
+            .height(600)
+            .title("Sorting Technique Performance Comparison")
+            .xAxisTitle("Sorting Technique")
+            .yAxisTitle("Runtime (ns)")
+            .theme(Styler.ChartTheme.GGPlot2)
+            .build();
 
-        // Customize Chart
-        chart.getStyler().setLegendVisible(true);
+    // Customize Chart
+    chart.getStyler().setLegendVisible(true);
 
-        // Add series
-        chart.addSeries("Bubble Sort", Arrays.asList("Random Array", "Sorted Array", "Inversely Sorted Array", "Array size 10,000"),
-                Arrays.asList(getBubbleSortRuntime(randomArray), getBubbleSortRuntime(sortedArray), getBubbleSortRuntime(inverselySortedArray), getBubbleSortRuntime(array_size_10000)));
-        chart.addSeries("Linear Sort (Counting Sort)", Arrays.asList("Random Array", "Sorted Array", "Inversely Sorted Array", "Array size 10,000"),
-                Arrays.asList(getCountingSortRuntime(randomArray), getCountingSortRuntime(sortedArray), getCountingSortRuntime(inverselySortedArray), getCountingSortRuntime(array_size_10000)));
-        chart.addSeries("Quick Sort", Arrays.asList("Random Array", "Sorted Array", "Inversely Sorted Array", "Array size 10,000"),
-                Arrays.asList(getQuickSortRuntime(randomArray), getQuickSortRuntime(sortedArray), getQuickSortRuntime(inverselySortedArray), getQuickSortRuntime(array_size_10000)));
+    // Add series
+    chart.addSeries("Bubble Sort", Arrays.asList("Random Array", "Sorted Array", "Inversely Sorted Array"),
+            Arrays.asList(getBubbleSortRuntime(randomArray), getBubbleSortRuntime(sortedArray), getBubbleSortRuntime(inverselySortedArray)));
+    chart.addSeries("Linear Sort (Counting Sort)", Arrays.asList("Random Array", "Sorted Array", "Inversely Sorted Array"),
+            Arrays.asList(getCountingSortRuntime(randomArray), getCountingSortRuntime(sortedArray), getCountingSortRuntime(inverselySortedArray)));
+    chart.addSeries("Quick Sort", Arrays.asList("Random Array", "Sorted Array", "Inversely Sorted Array"),
+            Arrays.asList(getQuickSortRuntime(randomArray), getQuickSortRuntime(sortedArray), getQuickSortRuntime(inverselySortedArray)));
 
-        // Display chart
-        new SwingWrapper<>(chart).displayChart();
-    }
+    // Display chart
+    new SwingWrapper<>(chart).displayChart();
+}
+
+public static long getCountingSortRuntime(int[] array) {
+    long startTime = System.nanoTime();
+    countingSort(Arrays.copyOf(array, array.length));
+    return System.nanoTime() - startTime;
+}
 
 
     public static void bubbleSort(int[] array) {
@@ -200,11 +194,7 @@ public class Main {
         return System.nanoTime() - startTime;
     }
 
-    public static long getCountingSortRuntime(int[] array) {
-        long startTime = System.nanoTime();
-        countingSort(Arrays.copyOf(array, array.length));
-        return System.nanoTime() - startTime;
-    }
+
 
     public static long getQuickSortRuntime(int[] array) {
         long startTime = System.nanoTime();
@@ -212,30 +202,29 @@ public class Main {
         return System.nanoTime() - startTime;
     }
 
- public static void compareSortingTechniques(int[] array)
-       {
-        long startTime, endTime;
-        int[] copy;
+public static void compareSortingTechniques(int[] array) {
+    long startTime, endTime;
+    int[] copy;
 
-        // Bubble Sort
-        copy = Arrays.copyOf(array, array.length);
-        startTime = System.nanoTime();
-        bubbleSort(copy);
-        endTime = System.nanoTime();
-        System.out.println("Bubble Sort: Runtime=" + (endTime - startTime) + "ns, Comparisons=" + bubbleComparisons + ", Interchanges=" + bubbleInterchanges);
+    // Bubble Sort
+    copy = Arrays.copyOf(array, array.length);
+    startTime = System.nanoTime();
+    bubbleSort(copy);
+    endTime = System.nanoTime();
+    System.out.println("Bubble Sort: Runtime=" + (endTime - startTime) + "ns, Comparisons=" + bubbleComparisons + ", Interchanges=" + bubbleInterchanges);
 
-        // Linear Sort (Counting Sort)
-        copy = Arrays.copyOf(array, array.length);
-        startTime = System.nanoTime();
-        countingSort(copy);
-        endTime = System.nanoTime();
-        System.out.println("Linear Sort: Runtime=" + (endTime - startTime) + "ns");
+    // Linear Sort (Counting Sort)
+    copy = Arrays.copyOf(array, array.length);
+    startTime = System.nanoTime();
+    countingSort(copy);
+    endTime = System.nanoTime();
+    System.out.println("Linear Sort (Counting Sort): Runtime=" + (endTime - startTime) + "ns");
 
-        // Quick Sort
-        copy = Arrays.copyOf(array, array.length);
-        startTime = System.nanoTime();
-        quickSort(copy, 0, copy.length - 1);
-        endTime = System.nanoTime();
-        System.out.println("Quick Sort: Runtime=" + (endTime - startTime) + "ns, Comparisons=" + quickComparisons + ", Interchanges=" + quickInterchanges);
-    }
+    // Quick Sort
+    copy = Arrays.copyOf(array, array.length);
+    startTime = System.nanoTime();
+    quickSort(copy, 0, copy.length - 1);
+    endTime = System.nanoTime();
+    System.out.println("Quick Sort: Runtime=" + (endTime - startTime) + "ns, Comparisons=" + quickComparisons + ", Interchanges=" + quickInterchanges);
+}
 }
