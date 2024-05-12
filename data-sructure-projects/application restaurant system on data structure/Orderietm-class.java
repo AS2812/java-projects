@@ -21,7 +21,16 @@ class OrderItem {
         return price;
     }
 
-    public double calculateSubtotal() {
+    public double calculateSubtotal()
+    {
         return quantity * price;
+    }
+    public  void setQuantity(int quantity)
+    {
+        this.quantity=quantity;
+    }
+
+    public void getQuantity(int quantity) {
+        getQuantity();
     }
 }
