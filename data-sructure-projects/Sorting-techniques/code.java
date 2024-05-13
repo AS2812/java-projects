@@ -80,7 +80,7 @@ public static long getCountingSortRuntime(int[] array) {
 
 
 
-    public static void bubbleSort(int[] array) {
+    public static int [] bubbleSort(int[] array) {
     int n = array.length;
     bubbleComparisons = 0;
     bubbleInterchanges = 0;
@@ -94,7 +94,12 @@ public static long getCountingSortRuntime(int[] array) {
                 bubbleInterchanges++; // Increment interchange count
             }
         }
+    if(bubbleInterchanges==0)
+        return array;
+
+
     }
+    return array;
 }
 
 
@@ -186,7 +191,7 @@ private static int partition(int[] A, int low, int high) {
     public static int[] generateRandomArray(int size) {
         int[] array = new int[size];
         for (int i = 0; i < size; i++) {
-            array[i] = (int) (Math.random() * size);
+            array[i] = (int) (Math.random() * 10);
         }
         return array;
     }
