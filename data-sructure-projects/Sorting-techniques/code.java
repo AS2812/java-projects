@@ -212,26 +212,6 @@ private static int partition(int[] A, int low, int high) {
         return array;
     }
 
-    public static String getRuntime(int[] array, String sortType) {
-        long startTime, endTime;
-        int[] copy = Arrays.copyOf(array, array.length);
-        startTime = System.nanoTime();
-        switch (sortType) {
-            case "bubble":
-                bubbleSort(copy);
-                break;
-            case "counting":
-                countingSort(copy);
-                break;
-            case "quick":
-                quickSort(copy, 0, copy.length - 1);
-                break;
-            default:
-                return "Invalid Sort Type";
-        }
-        endTime = System.nanoTime();
-        return String.valueOf(endTime - startTime) + "ns";
-    }
 
 public static void compareSortingTechniques(int[] array) {
     long startTime, endTime;
@@ -242,20 +222,38 @@ public static void compareSortingTechniques(int[] array) {
     startTime = System.nanoTime();
     bubbleSort(copy);
     endTime = System.nanoTime();
-    System.out.println("Bubble Sort: Runtime=" + (endTime - startTime) + "ns, Comparisons=" + bubbleComparisons + ", Interchanges=" + bubbleInterchanges);
+    long bubbleRuntime = endTime - startTime;
+    System.out.println("Bubble Sort: Runtime=" + bubbleRuntime + "ns, Comparisons=" + bubbleComparisons + ", Interchanges=" + bubbleInterchanges);
 
     // Linear Sort (Counting Sort)
     copy = Arrays.copyOf(array, array.length);
     startTime = System.nanoTime();
     countingSort(copy);
     endTime = System.nanoTime();
-    System.out.println("Linear Sort (Counting Sort): Runtime=" + (endTime - startTime) + "ns");
+    long countingRuntime = endTime - startTime;
+    System.out.println("Linear Sort (Counting Sort): Runtime=" + countingRuntime + "ns");
 
     // Quick Sort
     copy = Arrays.copyOf(array, array.length);
     startTime = System.nanoTime();
     quickSort(copy, 0, copy.length - 1);
     endTime = System.nanoTime();
-    System.out.println("Quick Sort: Runtime=" + (endTime - startTime) + "ns, Comparisons=" + quickComparisons + ", Interchanges=" + quickInterchanges);
+    long quickRuntime = endTime - startTime;
+    System.out.println("Quick Sort: Runtime=" + quickRuntime + "ns, Comparisons=" + quickComparisons + ", Interchanges=" + quickInterchanges);
+
+    // Determine and print the order of sorting
+    if (bubbleRuntime < countingRuntime && countingRuntime < quickRuntime) {
+        System.out.println("Order: Bubble Sort > Linear Sort > Quick Sort");
+    } else if (bubbleRuntime < quickRuntime && quickRuntime < countingRuntime) {
+        System.out.println("Order: Bubble Sort > Quick Sort > Linear Sort");
+    } else if (countingRuntime < bubbleRuntime && bubbleRuntime < quickRuntime) {
+        System.out.println("Order: Linear Sort > Bubble Sort > Quick Sort");
+    } else if (countingRuntime < quickRuntime && quickRuntime < bubbleRuntime) {
+        System.out.println("Order: Linear Sort > Quick Sort > Bubble Sort");
+    } else if (quickRuntime < bubbleRuntime && bubbleRuntime < countingRuntime) {
+        System.out.println("Order: Quick Sort > Bubble Sort > Linear Sort");
+    } else if (quickRuntime < countingRuntime && countingRuntime < bubbleRuntime) {
+        System.out.println("Order: Quick Sort > Linear Sort > Bubble Sort");
+    }
 }
 }
