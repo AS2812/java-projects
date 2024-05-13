@@ -57,6 +57,21 @@ public class Main {
     new SwingWrapper<>(chart).displayChart();
 }
 
+ // Helper methods to get runtime for each sorting technique
+    public static long getBubbleSortRuntime(int[] array) {
+        long startTime = System.nanoTime();
+        bubbleSort(Arrays.copyOf(array, array.length));
+        return System.nanoTime() - startTime;
+    }
+
+
+
+    public static long getQuickSortRuntime(int[] array) {
+        long startTime = System.nanoTime();
+        quickSort(Arrays.copyOf(array, array.length), 0, array.length - 1);
+        return System.nanoTime() - startTime;
+    }
+
 public static long getCountingSortRuntime(int[] array) {
     long startTime = System.nanoTime();
     countingSort(Arrays.copyOf(array, array.length));
@@ -64,67 +79,92 @@ public static long getCountingSortRuntime(int[] array) {
 }
 
 
+
     public static void bubbleSort(int[] array) {
-        int n = array.length;
-        bubbleComparisons = 0;
-        bubbleInterchanges = 0;
-        for (int i = 0; i < n - 1; i++) {
-            for (int j = 0; j < n - i - 1; j++) {
-                bubbleComparisons++; // Increment comparison count
-                if (array[j] > array[j + 1]) {
-                    int temp = array[j];
-                    array[j] = array[j + 1];
-                    array[j + 1] = temp;
-                    bubbleInterchanges++; // Increment interchange count
-                }
+    int n = array.length;
+    bubbleComparisons = 0;
+    bubbleInterchanges = 0;
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            bubbleComparisons++; // Increment comparison count
+            if (array[j] > array[j + 1]) {
+                int temp = array[j];
+                array[j] = array[j + 1];
+                array[j + 1] = temp;
+                bubbleInterchanges++; // Increment interchange count
             }
         }
     }
+}
 
-    public static void countingSort(int[] array) {
-        int max = getMax(array);
-        int[] count = new int[max + 1];
-        for (int num : array) {
-            count[num]++;
-        }
-        int k = 0;
-        for (int i = 0; i < count.length; i++) {
-            for (int j = 0; j < count[i]; j++) {
+
+  public static void countingSort(int[] array) {
+    int max = getMax(array);
+    int[] count = new int[max + 1];
+
+    // Count occurrences of each element
+    for (int num : array) {
+        count[num]++;
+    }
+
+    int k = 0;
+
+    // Iterate through the count array to find the positions of the elements
+    for (int i = 0; i < count.length; i++) {
+        if (count[i] > 0) {
+            int index = linearSearch(i, array); // Find the position of the element i in the original array
+            int occurrences = count[i];
+
+            // Add the element i 'occurrences' times in the sorted array
+            for (int j = 0; j < occurrences; j++) {
                 array[k++] = i;
             }
         }
     }
+}
+
+public static int linearSearch(int target, int[] a) {
+    for (int i = 0; i < a.length; i++) {
+        if (target == a[i]) return i;
+    }
+    return -1; // not a legal index
+}
 
     static int quickComparisons;
     static int quickInterchanges;
 
     public static void quickSort(int[] array, int low, int high) {
-        if (low < high) {
-            int pi = partition(array, low, high);
-            quickSort(array, low, pi - 1);
-            quickSort(array, pi + 1, high);
-        }
+    if (low < high) {
+        int pi = partition(array, low, high);
+        quickSort(array, low, pi - 1);
+        quickSort(array, pi + 1, high);
     }
+}
 
-    public static int partition(int[] array, int low, int high) {
-        int pivot = array[high];
-        int i = low - 1;
-        for (int j = low; j < high; j++) {
-            quickComparisons++; // Increment comparison count
-            if (array[j] <= pivot) {
-                i++;
-                int temp = array[i];
-                array[i] = array[j];
-                array[j] = temp;
-                quickInterchanges++; // Increment interchange count
-            }
+private static int partition(int[] A, int low, int high) {
+    int pivotIndex = low; // Assume first element is the pivot
+    int pivot = A[low]; // The pivot value
+    A[pivotIndex] = A[high]; // Swap pivot with last item
+    A[high] = pivot;
+    int i = low - 1;
+    int j = high;
+    do {
+        do {
+            i++;
+        } while (A[i] < pivot && i < high); // Added i < high condition to prevent ArrayIndexOutOfBoundsException
+        do {
+            j--;
+        } while (A[j] > pivot && j > low); // Added j > low condition to prevent ArrayIndexOutOfBoundsException
+        if (i < j) {
+            int Temp = A[i];
+            A[i] = A[j];
+            A[j] = Temp;
         }
-        int temp = array[i + 1];
-        array[i + 1] = array[high];
-        array[high] = temp;
-        quickInterchanges++; // Increment interchange count
-        return i + 1;
-    }
+    } while (i < j);
+    A[high] = A[i]; // Put the pivot back in the middle
+    A[i] = pivot;
+    return i;
+}
 
     static int bubbleComparisons;
     static int bubbleInterchanges;
@@ -186,20 +226,6 @@ public static long getCountingSortRuntime(int[] array) {
         }
         endTime = System.nanoTime();
         return String.valueOf(endTime - startTime) + "ns";
-    }
- // Helper methods to get runtime for each sorting technique
-    public static long getBubbleSortRuntime(int[] array) {
-        long startTime = System.nanoTime();
-        bubbleSort(Arrays.copyOf(array, array.length));
-        return System.nanoTime() - startTime;
-    }
-
-
-
-    public static long getQuickSortRuntime(int[] array) {
-        long startTime = System.nanoTime();
-        quickSort(Arrays.copyOf(array, array.length), 0, array.length - 1);
-        return System.nanoTime() - startTime;
     }
 
 public static void compareSortingTechniques(int[] array) {
