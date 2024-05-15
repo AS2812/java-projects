@@ -1,259 +1,315 @@
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
 
-import org.knowm.xchart.CategoryChart;
-import org.knowm.xchart.CategoryChartBuilder;
-import org.knowm.xchart.SwingWrapper;
-import org.knowm.xchart.style.Styler;
-
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.util.Arrays;
+import java.util.Random;
 
-/**
- *
- * @author ahmed
- */
 public class Main {
 
-
     public static void main(String[] args) {
-         int[] randomArray = generateRandomArray(10000);
-        int[] sortedArray = generateSortedArray(10000);
-        int[] inverselySortedArray = generateInverselySortedArray(10000);
+        int[] sortedArray = generateSortedArray();
+        int[] reverseSortedArray = generateReverseSortedArray();
+        int[] randomArray = generateRandomArray();
 
-        System.out.println("Performance comparison for Random Array :");
-        compareSortingTechniques(randomArray);
+        Result[] results = new Result[9];
+        long startTime, endTime;
 
-        System.out.println("\nPerformance comparison for Sorted Array :");
-        compareSortingTechniques(sortedArray);
+        // Bubble Sort
+        startTime = System.nanoTime();
+        bubblesort bub1 = bubblesort.sort(Arrays.copyOf(sortedArray, sortedArray.length));
+        endTime = System.nanoTime();
+        results[0] = new Result("Bubble Sort", "Sorted Array", bub1.comparisons, bub1.interchanges, endTime - startTime);
 
-        System.out.println("\nPerformance comparison for Inversely Sorted Array :");
-        compareSortingTechniques(inverselySortedArray);
+        startTime = System.nanoTime();
+        bubblesort bub2 = bubblesort.sort(Arrays.copyOf(randomArray, randomArray.length));
+        endTime = System.nanoTime();
+        results[1] = new Result("Bubble Sort", "Random Array", bub2.comparisons, bub2.interchanges, endTime - startTime);
 
-        // Generate and display the graph
-        displayPerformanceGraph(randomArray, sortedArray, inverselySortedArray);
+        startTime = System.nanoTime();
+        bubblesort bub3 = bubblesort.sort(Arrays.copyOf(reverseSortedArray, reverseSortedArray.length));
+        endTime = System.nanoTime();
+        results[2] = new Result("Bubble Sort", "Reverse Sorted Array", bub3.comparisons, bub3.interchanges, endTime - startTime);
+
+        // Counting Sort
+        startTime = System.nanoTime();
+        countsort coty1 = countsort.sort(Arrays.copyOf(sortedArray, sortedArray.length));
+        endTime = System.nanoTime();
+        results[3] = new Result("Counting Sort", "Sorted Array", -1, -1, endTime - startTime);
+
+        startTime = System.nanoTime();
+        countsort coty2 = countsort.sort(Arrays.copyOf(randomArray, randomArray.length));
+        endTime = System.nanoTime();
+        results[4] = new Result("Counting Sort", "Random Array", -1, -1, endTime - startTime);
+
+        startTime = System.nanoTime();
+        countsort coty3 = countsort.sort(Arrays.copyOf(reverseSortedArray, reverseSortedArray.length));
+        endTime = System.nanoTime();
+        results[5] = new Result("Counting Sort", "Reverse Sorted Array", -1, -1, endTime - startTime);
+
+        // Quick Sort
+        startTime = System.nanoTime();
+        quicksort qsort1 = new quicksort(Arrays.copyOf(sortedArray, sortedArray.length));
+        int[] sortedResult = qsort1.quicksort(0, sortedArray.length - 1);
+        endTime = System.nanoTime();
+        results[6] = new Result("Quick Sort", "Sorted Array", sortedResult[0], sortedResult[1], endTime - startTime);
+
+        startTime = System.nanoTime();
+        quicksort qsort2 = new quicksort(Arrays.copyOf(randomArray, randomArray.length));
+        int[] randomResult = qsort2.quicksort(0, randomArray.length - 1);
+        endTime = System.nanoTime();
+        results[7] = new Result("Quick Sort", "Random Array", randomResult[0], randomResult[1], endTime - startTime);
+
+        startTime = System.nanoTime();
+        quicksort qsort3 = new quicksort(Arrays.copyOf(reverseSortedArray, reverseSortedArray.length));
+        int[] reverseSortedResult = qsort3.quicksort(0, reverseSortedArray.length - 1);
+        endTime = System.nanoTime();
+        results[8] = new Result("Quick Sort", "Reverse Sorted Array", reverseSortedResult[0], reverseSortedResult[1], endTime - startTime);
+
+        SwingUtilities.invokeLater(() -> createAndShowGUI(results));
     }
 
-    public static void displayPerformanceGraph(int[] randomArray, int[] sortedArray, int[] inverselySortedArray) {
-    // Create Chart
-    CategoryChart chart = new CategoryChartBuilder()
-            .width(800)
-            .height(600)
-            .title("Sorting Technique Performance Comparison")
-            .xAxisTitle("Sorting Technique")
-            .yAxisTitle("Runtime (ns)")
-            .theme(Styler.ChartTheme.GGPlot2)
-            .build();
-
-    // Customize Chart
-    chart.getStyler().setLegendVisible(true);
-
-    // Add series
-    chart.addSeries("Bubble Sort", Arrays.asList("Random Array", "Sorted Array", "Inversely Sorted Array"),
-            Arrays.asList(getBubbleSortRuntime(randomArray), getBubbleSortRuntime(sortedArray), getBubbleSortRuntime(inverselySortedArray)));
-    chart.addSeries("Linear Sort (Counting Sort)", Arrays.asList("Random Array", "Sorted Array", "Inversely Sorted Array"),
-            Arrays.asList(getCountingSortRuntime(randomArray), getCountingSortRuntime(sortedArray), getCountingSortRuntime(inverselySortedArray)));
-    chart.addSeries("Quick Sort", Arrays.asList("Random Array", "Sorted Array", "Inversely Sorted Array"),
-            Arrays.asList(getQuickSortRuntime(randomArray), getQuickSortRuntime(sortedArray), getQuickSortRuntime(inverselySortedArray)));
-
-    // Display chart
-    new SwingWrapper<>(chart).displayChart();
-}
-
- // Helper methods to get runtime for each sorting technique
-    public static long getBubbleSortRuntime(int[] array) {
-        long startTime = System.nanoTime();
-        bubbleSort(Arrays.copyOf(array, array.length));
-        return System.nanoTime() - startTime;
-    }
-
-
-
-    public static long getQuickSortRuntime(int[] array) {
-        long startTime = System.nanoTime();
-        quickSort(Arrays.copyOf(array, array.length), 0, array.length - 1);
-        return System.nanoTime() - startTime;
-    }
-
-public static long getCountingSortRuntime(int[] array) {
-    long startTime = System.nanoTime();
-    countingSort(Arrays.copyOf(array, array.length));
-    return System.nanoTime() - startTime;
-}
-
-
-
-    public static int [] bubbleSort(int[] array) {
-    int n = array.length;
-    bubbleComparisons = 0;
-    bubbleInterchanges = 0;
-    for (int i = 0; i < n - 1; i++) {
-        for (int j = 0; j < n - i - 1; j++) {
-            bubbleComparisons++; // Increment comparison count
-            if (array[j] > array[j + 1]) {
-                int temp = array[j];
-                array[j] = array[j + 1];
-                array[j + 1] = temp;
-                bubbleInterchanges++; // Increment interchange count
-            }
-        }
-    if(bubbleInterchanges==0)
-        return array;
-
-
-    }
-    return array;
-}
-
-
-  public static void countingSort(int[] array) {
-    int max = getMax(array);
-    int[] count = new int[max + 1];
-
-    // Count occurrences of each element
-    for (int num : array) {
-        count[num]++;
-    }
-
-    int k = 0;
-
-    // Iterate through the count array to find the positions of the elements
-    for (int i = 0; i < count.length; i++) {
-        if (count[i] > 0) {
-            int index = linearSearch(i, array); // Find the position of the element i in the original array
-            int occurrences = count[i];
-
-            // Add the element i 'occurrences' times in the sorted array
-            for (int j = 0; j < occurrences; j++) {
-                array[k++] = i;
-            }
-        }
-    }
-}
-
-public static int linearSearch(int target, int[] a) {
-    for (int i = 0; i < a.length; i++) {
-        if (target == a[i]) return i;
-    }
-    return -1; // not a legal index
-}
-
-    static int quickComparisons;
-    static int quickInterchanges;
-
-    public static void quickSort(int[] array, int low, int high) {
-    if (low < high) {
-        int pi = partition(array, low, high);
-        quickSort(array, low, pi - 1);
-        quickSort(array, pi + 1, high);
-    }
-}
-
-private static int partition(int[] A, int low, int high) {
-    int pivotIndex = low; // Assume first element is the pivot
-    int pivot = A[low]; // The pivot value
-    A[pivotIndex] = A[high]; // Swap pivot with last item
-    A[high] = pivot;
-    int i = low - 1;
-    int j = high;
-    do {
-        do {
-            i++;
-        } while (A[i] < pivot && i < high); // Added i < high condition to prevent ArrayIndexOutOfBoundsException
-        do {
-            j--;
-        } while (A[j] > pivot && j > low); // Added j > low condition to prevent ArrayIndexOutOfBoundsException
-        if (i < j) {
-            int Temp = A[i];
-            A[i] = A[j];
-            A[j] = Temp;
-        }
-    } while (i < j);
-    A[high] = A[i]; // Put the pivot back in the middle
-    A[i] = pivot;
-    return i;
-}
-
-    static int bubbleComparisons;
-    static int bubbleInterchanges;
-
-    public static int getMax(int[] arr) {
-        if (arr.length == 0) {
-            throw new IllegalArgumentException("Array cannot be empty");
-        }
-
-        int max = arr[0];
-        for (int num : arr) {
-            if (num > max) {
-                max = num;
-            }
-        }
-        return max;
-    }
-
-    public static int[] generateRandomArray(int size) {
-        int[] array = new int[size];
-        for (int i = 0; i < size; i++) {
-            array[i] = (int) (Math.random() * 10);
-        }
-        return array;
-    }
-
-    public static int[] generateSortedArray(int size) {
-        int[] array = new int[size];
-        for (int i = 0; i < size; i++) {
+    static int[] generateSortedArray() {
+        int[] array = new int[10000];
+        for (int i = 0; i < array.length; i++) {
             array[i] = i;
         }
         return array;
     }
 
-    public static int[] generateInverselySortedArray(int size) {
-        int[] array = new int[size];
-        for (int i = 0; i < size; i++) {
-            array[i] = size - i;
+    static int[] generateReverseSortedArray() {
+        int[] array = new int[10000];
+        for (int i = 0; i < array.length; i++) {
+            array[i] = array.length - i - 1;
         }
         return array;
     }
 
+    static int[] generateRandomArray() {
+        Random random = new Random();
+        int[] array = new int[10000];
+        for (int i = 0; i < array.length; i++) {
+            array[i] = random.nextInt(10000);
+        }
+        return array;
+    }
 
-public static void compareSortingTechniques(int[] array) {
-    long startTime, endTime;
-    int[] copy;
+    static void createAndShowGUI(Result[] results) {
+        JFrame frame = new JFrame("Sorting Algorithms Comparison");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(1200, 800);
 
-    // Bubble Sort
-    copy = Arrays.copyOf(array, array.length);
-    startTime = System.nanoTime();
-    bubbleSort(copy);
-    endTime = System.nanoTime();
-    long bubbleRuntime = endTime - startTime;
-    System.out.println("Bubble Sort: Runtime=" + bubbleRuntime + "ns, Comparisons=" + bubbleComparisons + ", Interchanges=" + bubbleInterchanges);
+        String[] columnNames = {"Sort Type", "Array Type", "Comparisons", "Interchanges/Swaps", "Time (nanoseconds)"};
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+        JTable table = new JTable(model);
 
-    // Linear Sort (Counting Sort)
-    copy = Arrays.copyOf(array, array.length);
-    startTime = System.nanoTime();
-    countingSort(copy);
-    endTime = System.nanoTime();
-    long countingRuntime = endTime - startTime;
-    System.out.println("Linear Sort (Counting Sort): Runtime=" + countingRuntime + "ns");
+        for (Result result : results) {
+            String comparisons = result.comparisons == -1 ? "N/A" : String.valueOf(result.comparisons);
+            String interchanges = result.interchanges == -1 ? "N/A" : String.valueOf(result.interchanges);
+            model.addRow(new Object[]{result.sortType, result.arrayType, comparisons, interchanges, result.time});
+        }
 
-    // Quick Sort
-    copy = Arrays.copyOf(array, array.length);
-    startTime = System.nanoTime();
-    quickSort(copy, 0, copy.length - 1);
-    endTime = System.nanoTime();
-    long quickRuntime = endTime - startTime;
-    System.out.println("Quick Sort: Runtime=" + quickRuntime + "ns, Comparisons=" + quickComparisons + ", Interchanges=" + quickInterchanges);
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        for (Result result : results) {
+            dataset.addValue(result.time, result.sortType + " - " + result.arrayType, "Time");
+        }
+        JFreeChart barChart = ChartFactory.createBarChart(
+                "Sorting Algorithms Comparison",
+                "Algorithm and Array Type",
+                "Time (nanoseconds)",
+                dataset,
+                PlotOrientation.VERTICAL,
+                true, true, false);
+        ChartPanel chartPanel = new ChartPanel(barChart);
+        chartPanel.setPreferredSize(new Dimension(1100, 600));
 
-    // Determine and print the order of sorting
-    if (bubbleRuntime < countingRuntime && countingRuntime < quickRuntime) {
-        System.out.println("Order: Bubble Sort > Linear Sort > Quick Sort");
-    } else if (bubbleRuntime < quickRuntime && quickRuntime < countingRuntime) {
-        System.out.println("Order: Bubble Sort > Quick Sort > Linear Sort");
-    } else if (countingRuntime < bubbleRuntime && bubbleRuntime < quickRuntime) {
-        System.out.println("Order: Linear Sort > Bubble Sort > Quick Sort");
-    } else if (countingRuntime < quickRuntime && quickRuntime < bubbleRuntime) {
-        System.out.println("Order: Linear Sort > Quick Sort > Bubble Sort");
-    } else if (quickRuntime < bubbleRuntime && bubbleRuntime < countingRuntime) {
-        System.out.println("Order: Quick Sort > Bubble Sort > Linear Sort");
-    } else if (quickRuntime < countingRuntime && countingRuntime < bubbleRuntime) {
-        System.out.println("Order: Quick Sort > Linear Sort > Bubble Sort");
+        JButton startButton = new JButton("Start Sorting Visualization");
+        int[] randomArray = GUIsimulation.generateRandomArray(10000); // Full size for visualization
+        startButton.addActionListener(e -> openVisualizationWindow(randomArray));
+
+        frame.setLayout(new BorderLayout());
+        frame.add(new JScrollPane(table), BorderLayout.NORTH);
+        frame.add(chartPanel, BorderLayout.CENTER);
+        frame.add(startButton, BorderLayout.SOUTH);
+
+        frame.setVisible(true);
+    }
+
+    static void openVisualizationWindow(int[] array) {
+        JFrame visualizationFrame = new JFrame("Sorting Visualization");
+        visualizationFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        visualizationFrame.setSize(800, 600);
+
+        GUIsimulation guiSimulation = new GUIsimulation(array);
+        guiSimulation.startSorting();
+
+        visualizationFrame.add(guiSimulation);
+        visualizationFrame.setVisible(true);
+    }
+
+    static class Result {
+        String sortType;
+        String arrayType;
+        int comparisons;
+        int interchanges;
+        long time;
+
+        Result(String sortType, String arrayType, int comparisons, int interchanges, long time) {
+            this.sortType = sortType;
+            this.arrayType = arrayType;
+            this.comparisons = comparisons;
+            this.interchanges = interchanges;
+            this.time = time;
+        }
     }
 }
+
+
+
+        class bubblesort {
+    int[] sortedArray;
+    int comparisons;
+    int interchanges;
+
+    public bubblesort(int[] sortedArray, int comparisons, int interchanges) {
+        this.sortedArray = sortedArray;
+        this.comparisons = comparisons;
+        this.interchanges = interchanges;
+    }
+
+    static bubblesort sort(int[] arr) {
+        int n = arr.length;
+        int comparisons = 0;
+        int interchanges = 0;
+        boolean sorted = true; // Assume the array is sorted initially
+
+        for (int i = 0; i < n - 1; i++) {
+            boolean swapped = false; // Flag to track if any swap occurs in this pass
+            for (int j = 0; j < n - i - 1; j++) {
+                comparisons++;
+                if (arr[j] > arr[j + 1]) {
+                    interchanges++;
+                    int temp = arr[j];
+                    arr[j] = arr[j + 1];
+                    arr[j + 1] = temp;
+                    swapped = true; // Mark that a swap occurred
+                }
+            }
+            // If no swap occurred in this pass, the array is already sorted
+            if (!swapped) {
+                sorted = true;
+                break;
+            }
+        }
+
+        // If the array was already sorted, return without creating a new instance
+        if (sorted) {
+            return new bubblesort(arr, comparisons, interchanges);
+        } else {
+            // If the array was not already sorted, proceed with normal bubble sort
+            for (int i = 0; i < n - 1; i++) {
+                for (int j = 0; j < n - i - 1; j++) {
+                    comparisons++;
+                    if (arr[j] > arr[j + 1]) {
+                        interchanges++;
+                        int temp = arr[j];
+                        arr[j] = arr[j + 1];
+                        arr[j + 1] = temp;
+                    }
+                }
+            }
+            return new bubblesort(arr, comparisons, interchanges);
+        }
+    }
+}
+
+class countsort {
+    int[] sorted_array;
+    static int key_assignments;
+
+    public countsort(int[] sorted_array) {
+        this.sorted_array = sorted_array;
+    }
+
+    public static countsort sort(int[] arr) {
+        if (arr == null || arr.length == 0)
+            return null;
+
+        // Reset key_assignments for each sort operation
+        key_assignments = 0;
+
+        // Find the maximum value in the array
+        int max = arr[0];
+        for (int i = 1; i < arr.length; i++) {
+            if (arr[i] > max)
+                max = arr[i];
+        }
+
+        // Create a count array to store the count of each element
+        int[] count = new int[max + 1];
+
+        // Store the count of each element in the input array
+        for (int i = 0; i < arr.length; i++) {
+            count[arr[i]]++;
+        }
+
+        // Build the sorted output array
+        int[] output = new int[arr.length];
+        int index = 0;
+        for (int i = 0; i <= max; i++) {
+            while (count[i] > 0) {
+                output[index++] = i;
+                count[i]--;
+                key_assignments++; // Count key assignments
+            }
+        }
+        return new countsort(output);
+    }
+}
+
+class quicksort {
+    int comp;
+    int swaps;
+    int[] array;
+
+    public quicksort(int[] array) {
+        this.array = array;
+        this.comp = 0;
+        this.swaps = 0;
+    }
+
+    public int[] quicksort(int low, int high) {
+        if (low < high) {
+            int pivot = partition(low, high);
+            quicksort(low, pivot - 1);
+            quicksort(pivot + 1, high);
+        }
+        return new int[]{comp, swaps};
+    }
+
+    int partition(int low, int high) {
+        int pivot = array[high];
+        int i = low - 1;
+        for (int j = low; j <= high - 1; j++) {
+            comp++;
+            if (array[j] < pivot) {
+                i++;
+                int temp = array[i];
+                array[i] = array[j];
+                array[j] = temp;
+                swaps++;
+            }
+        }
+        i++;
+        int temp = array[i];
+        array[i] = array[high];
+        array[high] = temp;
+        swaps++;
+        return i;
+    }
 }
